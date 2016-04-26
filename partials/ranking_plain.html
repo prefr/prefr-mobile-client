@@ -1,0 +1,64 @@
+<header>
+	<button class = "large" ng-click = "nameModal = true">{{activePaper.participant || '(missing name)'}}</button><!--
+ --><button class = "small" ng-click = "pickPaper()"><i class ="fa fa-bars"></i></button>
+
+	<h1> {{ballot.subject || '(missing subject)'}}</h1>
+</header>
+
+<article class = "modal" ng-show="nameModal">
+	<div class ="content">
+		<h3>Please enter a name.</h3>
+		<input ng-model = "activePaper.participant"></input>
+		<button ng-click = "nameModal = false" ng-disabled = "!activePaper.participant">OK</button>
+	</div>
+</article>
+
+<section 
+	class 					= "ranking"
+	ng-if 					= "ready"
+	ng-class				= "{'active': !!active.option}"
+>	
+	<button 
+		class 		= "new"
+		ng-click	= "moveOption()"
+	>
+		<i class = "fa fa-caret-left fa-3x"></i>
+		&nbsp;
+		insert into new rank
+	</button>
+
+	<section 
+		class 				= "rank"
+		ng-repeat-start 	= "rank in activePaper.ranking"
+		ng-click			= "moveOption(rank); $event.stopPropagation()"
+		ng-animate-children
+	>
+		<article 
+			class 			= "option"
+			ng-repeat 		= "option in rank"
+			ng-class		= "{'active': active.option == option}"
+			ng-click		= "active.option = active.option || option; moveOption(rank); $event.stopPropagation();"
+		>
+			<div class ="controls">		<button><i class = "fa fa-pencil"></i></button>	</div><!--
+		 --><div class ="content">
+			 	<div class ="title">	{{ballot.options.get(option).title || "missing title"}}	</div><!--
+			 --><div class ="details">	{{ballot.options.get(option).details || "no details"}}</div>
+			</div>
+		</article>
+	</section>
+	<button 
+		class 		= "new"
+		ng-click	= "moveOption(rank, true); $event.stopPropagation()"
+		ng-repeat-end
+	>
+		<i class = "fa fa-caret-left fa-3x"></i>
+		&nbsp;
+		insert into new rank
+	</button>
+</section>
+
+
+
+<footer>
+	<button ng-click = "save()"><i class = "fa fa-check"></i></button>
+</footer>
