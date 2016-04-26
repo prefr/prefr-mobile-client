@@ -20,8 +20,7 @@
 
 
 			ngPrefrApiProvider
-			//.setApiUrl('https://api.prefr.org/api')
-			.setApiUrl('/api')
+			.setApiUrl(prefrConfig.apiUrl) //from config.js
 
 			$routeProvider
 			.when(
