@@ -18,7 +18,7 @@
 
 		function($routeProvider, $locationProvider, $animateProvider, ngPrefrApiProvider){
 
-			if(!prefr_config){
+			if(!prefrConfig){
 				console.error('missing prefr config. Please load config.js');
 			}
 
