@@ -11,7 +11,7 @@
 	angular.module(
 		'PrefrMobileRanking',   
 		[
-			'ng',
+			
 		]
 	)
 
