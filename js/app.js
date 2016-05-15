@@ -26,7 +26,7 @@
 
 			$routeProvider
 			.when(
-				'/:boxId?/:adminSecret?',
+				'/ballotBox/:boxId/:adminSecret?',			//legacy
 				{
 					templateUrl :   '/partials/pick.html',
 					controller  :   'ballotBoxPick',
@@ -34,7 +34,7 @@
 				}
 			)
 			.when(
-				'/ballotBox/:boxId/:adminSecret?',
+				'/:boxId?/:adminSecret?',
 				{
 					templateUrl :   '/partials/pick.html',
 					controller  :   'ballotBoxPick',
