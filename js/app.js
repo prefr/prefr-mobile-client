@@ -4,7 +4,6 @@
 
 	angular.module('PrefrMobile',[
 		'ngRoute',
-		'hmTouchEvents',
 		'ngAnimate',
 		'PrefrMobileRanking',
 		'ngPrefrApi',
