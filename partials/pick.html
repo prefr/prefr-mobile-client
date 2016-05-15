@@ -7,7 +7,7 @@
 	<a href="/?force_desktop">Force desktop version</a>
 </article>
 
-<article ng-if ="!!ballot">
+<section ng-if ="!!ballot" class = "light">
 	<header>
 		<button class = "large">{{ballot.subject || '(missing subject)'}}</button><!--
 	 --><button class = "small" disabled><i class = "fa fa-gear"></i></button>
@@ -15,25 +15,39 @@
 		<h1>Whose vote to change?</h1>
 	</header>
 
-	<section 
-		class 	= "pick-paper"
-	>
-		<div ng-if ="log[0]">
-			{{log[0]}}
-		</div>
+	<div ng-if ="log[0]">
+		{{log[0]}}
+	</div>
 
-		<button
-			ng-click = "newPaper()"
-		>
-			add a new participant 
-		</button>
-		<br/>
-		<br/>
-		<button 
-			ng-repeat   = "paper in ballot.papers"
-			ng-click    = "editPaper(paper)"
-		>
+	<div
+		class 		= "item dark"
+		ng-click 	= "newPaper()"
+	>
+		<i class = "fa fa-plus-circle"></i> add a new participant 
+	</div>
+
+	<article 
+		class		= "item light"
+		ng-repeat   = "paper in ballot.papers"
+		ng-click    = "editPaper(paper)"
+	>
+		<div class = "tag"><i class = "fa fa-user"></i></div> 
+		<div class = "content">
 			{{paper.participant || "(missing name)"}}
-		</button>
-	</section>
+		</div>
+		<div class = "controls">
+			<button>
+				<i class = "fa fa-pencil"></i>
+			</button>
+		</div>
+	</article>
+
+	<div
+		class 		= "item dark"
+		ng-click 	= "newPaper()"
+	>
+		<i class = "fa fa-plus-circle"></i> add a new participant 
+	</div>
+
+
 </article>

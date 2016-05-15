@@ -4,8 +4,8 @@
 
 	angular.module('PrefrMobile',[
 		'ngRoute',
-		//'ngTouch',
-		//'ngAnimate',
+		'hmTouchEvents',
+		'ngAnimate',
 		'PrefrMobileRanking',
 		'ngPrefrApi',
 	])
@@ -29,7 +29,7 @@
 			.when(
 				'/:boxId?/:adminSecret?',
 				{
-					templateUrl :   'partials/pick.html',
+					templateUrl :   '/partials/pick.html',
 					controller  :   'ballotBoxPick',
 					reloadOnSearch: false
 				}
@@ -37,15 +37,23 @@
 			.when(
 				'/ballotBox/:boxId/:adminSecret?',
 				{
-					templateUrl :   'partials/pick.html',
+					templateUrl :   '/partials/pick.html',
 					controller  :   'ballotBoxPick',
 					reloadOnSearch: false
 				}
 			)
 			.when(
-				'/:boxId/edit/:paperId',
+				'/:boxId/paper/:paperId',
 				{
-					templateUrl :   'partials/ranking_plain.html',
+					templateUrl :   '/partials/ranking_plain.html',
+					controller  :   'ballotBoxEdit',
+					reloadOnSearch: false
+				}
+			)
+			.when(
+				'/:boxId/paper/:paperId/option/:optionTag',
+				{
+					templateUrl :   '/partials/edit_option.html',
 					controller  :   'ballotBoxEdit',
 					reloadOnSearch: false
 				}
@@ -66,10 +74,12 @@
 		}
 	])
 	.run(['$rootScope', function($rootScope){
-		$rootScope.console = window.console
-		$rootScope.$watch(function(){
-			console.log('watch!')
-		})
+		// $rootScope.console = window.console
+		// $rootScope.$watch(function(){
+		// 	console.log('watch!')
+		// })
+		//FastClick.attach(document.body);	
+
 	}])
 
 	.service('ballotBox',[
@@ -213,7 +223,7 @@
 
 
 			$scope.editPaper 	= 	function(paper){
-										$location.path('/' + box_id + '/edit/' + paper.id)
+										$location.path('/' + box_id + '/paper/' + paper.id)
 									}
 
 		}
@@ -273,6 +283,61 @@
 				$scope.nameModal = true
 			}
 
+
+
+
+
+			var optionHeightUnits 		= 5,
+				rankHeightExtraUnits	= 2,	//margin
+				addButtonHeightUnits	= 4		//add button
+
+
+			$scope.getRankHeightUnits = function(rank){
+				return	(
+							rank.length 
+							?	rank.length * optionHeightUnits		//nonempty
+							:	optionHeightUnits					//empty
+						)
+						+	rankHeightExtraUnits
+			}
+
+
+
+			function addRankHeight(sum, current_rank, index){
+				return sum + $scope.getRankHeightUnits(current_rank)
+			}
+
+			$scope.getRankTopUnits = function(rank){
+				var rank_index = $scope.activePaper.ranking.indexOf(rank)
+
+				return  $scope.activePaper.ranking
+						.slice(0, rank_index)
+						.reduce(addRankHeight, (rank_index+1) *addButtonHeightUnits)
+
+
+			}
+
+
+			$scope.getRankingHeightUnits = function(){
+				if(!$scope.activePaper) return null
+
+				var last_rank = $scope.activePaper.ranking[$scope.activePaper.ranking.length-1]
+
+				return		$scope.getRankTopUnits(last_rank)
+						+	$scope.getRankHeightUnits(last_rank)
+			}
+
+
+			$scope.getOptionTopUnits = function(rank, option){
+				var option_index = rank.indexOf(option)
+
+				if(option_index == -1) return null
+
+				return	option_index * optionHeightUnits
+			}
+
+
+
 			$scope.moveOption = function(rank, after) {
 
 				if(!$scope.active.rank){
@@ -312,14 +377,36 @@
 
 
 				if(move_option_into_existing_rank){
-					rank.push($scope.active.option) 
+					active_rank_index > target_rank_index
+					?	rank.push($scope.active.option) 
+					:	rank.unshift($scope.active.option)
 				}
 
 
-				$scope.activePaper.fix()
+				//$scope.activePaper.fix()
 
 				$scope.active.rank 		= undefined
 				$scope.active.option 	= undefined
+			}
+
+			$scope.newRank = function(rank){
+				if(!rank){
+					$scope.activePaper.ranking.unshift([])
+				} else {
+					var rank_index = $scope.activePaper.ranking.indexOf(rank)
+
+					if(rank_index != -1){
+						 $scope.activePaper.ranking.splice(rank_index+1, 0, [])
+					}
+				}
+			}
+
+			$scope.removeRank = function(rank){
+				var rank_index = $scope.activePaper.ranking.indexOf(rank)
+				
+				if(rank_index != -1){
+					$scope.activePaper.ranking.splice(rank_index,1)
+				}
 			}
 
 			$scope.save = function(){

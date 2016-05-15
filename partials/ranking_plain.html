@@ -5,7 +5,7 @@
 	<h1> {{ballot.subject || '(missing subject)'}}</h1>
 </header>
 
-<article class = "modal" ng-show="nameModal">
+<article class = "modal" ng-show="ready && nameModal">
 	<div class ="content">
 		<h3>Please enter a name.</h3>
 		<input ng-model = "activePaper.participant"></input>
@@ -13,51 +13,67 @@
 	</div>
 </article>
 
-<section 
-	class 					= "ranking"
-	ng-if 					= "ready"
-	ng-class				= "{'active': !!active.option}"
->	
-	<button 
-		class 		= "new"
-		ng-click	= "moveOption()"
-	>
-		<i class = "fa fa-caret-left fa-3x"></i>
-		&nbsp;
-		insert into new rank
-	</button>
+<section class = "dark">
 
 	<section 
-		class 				= "rank"
-		ng-repeat-start 	= "rank in activePaper.ranking"
-		ng-click			= "moveOption(rank); $event.stopPropagation()"
-		ng-animate-children
-	>
-		<article 
-			class 			= "option"
-			ng-repeat 		= "option in rank"
-			ng-class		= "{'active': active.option == option}"
-			ng-click		= "active.option = active.option || option; moveOption(rank); $event.stopPropagation();"
+		class 					= "ranking"
+		ng-if 					= "ready"
+		ng-class				= "{'active': !!active.option}"
+		style					= "height: {{getRankingHeightUnits()}}em"
+	>	
+		<button 
+			class 				= "new"
+			ng-click			= "newRank(); $event.stopPropagation()"
 		>
-			<div class ="controls">		<button><i class = "fa fa-pencil"></i></button>	</div><!--
-		 --><div class ="content">
-			 	<div class ="title">	{{ballot.options.get(option).title || "missing title"}}	</div><!--
-			 --><div class ="details">	{{ballot.options.get(option).details || "no details"}}</div>
-			</div>
-		</article>
+			<i class = "fa fa-caret-left fa-3x"></i>
+			&nbsp;
+			insert into new rank
+		</button>
+
+		<section 
+			class 				= "rank ng-animate-enabled"
+			ng-class			= "{'empty': rank.length == 0}"
+			ng-repeat-start 	= "rank in activePaper.ranking"
+			ng-click			= "moveOption(rank); $event.stopPropagation()"
+			style				= "transform:translateY({{getRankTopUnits(rank)}}em)"
+			ng-animate-children
+		>
+			<article 
+				class 			= "option item ng-animate-enabled"
+				style			= "transform:translateY({{getOptionTopUnits(rank, option)}}em)"
+				ng-if			= "rank.length > 0"
+				ng-repeat 		= "option in rank"
+				ng-class		= "{'dark': active.option == option, 'light': active.option != option}"
+				ng-click		= "active.option = active.option || option; moveOption(rank); $event.stopPropagation();"
+			>
+				<div class = "tag">{{option}}</div><!--
+			 --><div class ="controls">		<button><i class = "fa fa-pencil"></i></button>	</div><!--
+			 --><div class ="content">
+				 	<div class ="title">	{{ballot.options.get(option).title 		|| "missing title"}}	</div><!--
+				 --><div class ="details">	{{ballot.options.get(option).details 	|| "no details"}}		</div>
+				</div>
+			</article>
+
+			<button
+				ng-if		= "rank.length == 0"
+				ng-click	= "removeRank(rank)"
+			>
+				<i class = "fa fa-times"></i>
+			</button>
+		</section>
+		<button 
+			class 		= "new"
+			ng-click	= "newRank(rank); $event.stopPropagation()"
+			style		= "transform:translateY({{getRankTopUnits(rank) + getRankHeightUnits(rank)}}em)"
+			ng-repeat-end
+		>
+			<i class = "fa fa-caret-left fa-3x"></i>
+			&nbsp;
+			insert into new rank
+		</button>
 	</section>
-	<button 
-		class 		= "new"
-		ng-click	= "moveOption(rank, true); $event.stopPropagation()"
-		ng-repeat-end
-	>
-		<i class = "fa fa-caret-left fa-3x"></i>
-		&nbsp;
-		insert into new rank
-	</button>
+
 </section>
-
-
 
 <footer>
 	<button ng-click = "save()"><i class = "fa fa-check"></i></button>
