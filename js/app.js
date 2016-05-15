@@ -66,7 +66,7 @@
 
 			// use the HTML5 History API
 			$locationProvider.html5Mode({
-				enabaled: 		true,
+				enabled: 		true,
 				requireBase:	false 
 			});
 
